@@ -1,0 +1,21 @@
+box:
+  id: alpine:3.3
+  cmd: /bin/sh
+no-response-timeout: 15
+build:
+  services:
+    - name: dynamodb
+      id: tray/dynamodb-local
+      tag: latest
+      cmd: -sharedDb -inMemory -port 7777
+  steps:
+    - script:
+        name: install curl
+        code: apk add --no-cache curl
+    - script:
+        name: ping dynamodb
+        code: |
+          until $(curl dynamodb:7777); do
+            printf '.'
+            sleep 5
+          done
